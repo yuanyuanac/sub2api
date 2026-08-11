@@ -14,6 +14,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -217,7 +218,12 @@ func (s *FrontendServer) injectSettings(settingsJSON []byte) []byte {
 	return result
 }
 
-// injectSiteFavicon replaces the static favicon with a configured, browser-safe image URL.
+var (
+	linkTagPattern = regexp.MustCompile(`(?i)<link\b[^>]*>`)
+	relAttrPattern = regexp.MustCompile("(?i)\\brel\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))")
+)
+
+// injectSiteFavicon removes static favicon candidates and inserts one configured, browser-safe favicon.
 func injectSiteFavicon(html, settingsJSON []byte) []byte {
 	var cfg struct {
 		SiteLogo string `json:"site_logo"`
@@ -231,22 +237,66 @@ func injectSiteFavicon(html, settingsJSON []byte) []byte {
 		return html
 	}
 
-	linkStart := bytes.Index(html, []byte(`<link rel="icon"`))
-	if linkStart == -1 {
-		return html
-	}
-	linkEndOffset := bytes.IndexByte(html[linkStart:], '>')
-	if linkEndOffset == -1 {
-		return html
-	}
-	linkEnd := linkStart + linkEndOffset + 1
-	replacement := []byte(`<link rel="icon" href="` + htmlpkg.EscapeString(logoURL) + `" />`)
+	withoutFavicons := linkTagPattern.ReplaceAllFunc(html, func(linkTag []byte) []byte {
+		match := relAttrPattern.FindSubmatch(linkTag)
+		if len(match) == 0 {
+			return linkTag
+		}
 
-	var buf bytes.Buffer
-	buf.Write(html[:linkStart])
-	buf.Write(replacement)
-	buf.Write(html[linkEnd:])
-	return buf.Bytes()
+		rel := ""
+		for _, candidate := range match[1:] {
+			if len(candidate) > 0 {
+				rel = string(candidate)
+				break
+			}
+		}
+		for _, token := range strings.Fields(rel) {
+			if strings.EqualFold(token, "icon") {
+				return nil
+			}
+		}
+		return linkTag
+	})
+
+	headClose := []byte("</head>")
+	if !bytes.Contains(withoutFavicons, headClose) {
+		return html
+	}
+
+	typeAttribute := ""
+	if mimeType := faviconMIMEType(logoURL); mimeType != "" {
+		typeAttribute = ` type="` + mimeType + `"`
+	}
+	favicon := []byte(`<link rel="icon"` + typeAttribute + ` href="` + htmlpkg.EscapeString(logoURL) + `" />`)
+	return bytes.Replace(withoutFavicons, headClose, append(favicon, headClose...), 1)
+}
+
+func faviconMIMEType(value string) string {
+	lowerValue := strings.ToLower(value)
+	if strings.HasPrefix(lowerValue, "data:image/svg+xml") {
+		return "image/svg+xml"
+	}
+	if strings.HasPrefix(lowerValue, "data:image/png") {
+		return "image/png"
+	}
+	if strings.HasPrefix(lowerValue, "data:image/x-icon") {
+		return "image/x-icon"
+	}
+
+	parsed, err := url.Parse(value)
+	if err != nil {
+		return ""
+	}
+	switch strings.ToLower(filepath.Ext(parsed.Path)) {
+	case ".svg":
+		return "image/svg+xml"
+	case ".png":
+		return "image/png"
+	case ".ico":
+		return "image/x-icon"
+	default:
+		return ""
+	}
 }
 
 func safeImageURL(value string) string {
