@@ -1,16 +1,16 @@
 # Implementation Status
 
 Role: current-state
-Status: B2/B3/B5 committed and verified; B6G GitHub synchronization active
+Status: B2/B3/B5 verified; Draft PR open; fork CI activation blocked
 Last verified: 2026-08-12 Asia/Shanghai
 
 - Base: `main` at `1e618dbc299fc0a82e9a690bcf2d5843be817113`
 - Active branch: `feature/sub2api-branding`
 - Last completed: B5 default/compact homepage modes passed Chromium acceptance and all available frontend gates; committed as `79abcc45bdf0afa5387ea4dd246408ebffcda9ae`. B2/B3 branding infrastructure remains independently committed as `aee363d0ad89a0806e3bcf29fc4a70b2e71f23b8`.
-- Active TODO: commit this verification evidence, fetch and ordinary-push the feature branch, create a Draft PR, follow CI, and prove local/remote/PR SHA identity.
+- Active TODO: record GitHub state, prove local/remote/PR SHA identity, then obtain explicit authority to activate workflows in the fork before following CI.
 - Last verification: Chromium scenarios passed 8/8 across 360/768/1440 widths and required state variants; focused homepage Vitest passed 19/19; full frontend Vitest passed 221 files / 1547 tests; lint, typecheck, production build, and `git diff --check` passed. Go and Docker validation remain environment-blocked because neither toolchain is installed locally.
-- PR / CI / artifact / deployment: none.
+- PR / CI / artifact / deployment: Draft PR [#1](https://github.com/yuanyuanac/sub2api/pull/1) is open. GitHub reports Actions enabled at repository level but zero workflows registered in this fork, so no PR checks were created. No artifact or deployment exists.
 - External blocker: staging and production facts/authorization are unavailable; B7/B8 remain out of scope.
-- Next target: land the evidence-only commit, synchronize `feature/sub2api-branding`, open a Draft PR, and inspect required CI without merging or deploying.
+- Next target: ordinary-push this status checkpoint and verify SHA identity. CI requires the repository owner to enable fork workflows (or explicitly authorize that settings change); merging and deployment remain prohibited.
 
 Evidence: [original frontend baseline](evidence/2026-08-12-original-frontend-baseline.md), [brand infrastructure verification](evidence/2026-08-12-brand-infrastructure-verification.md), [homepage browser and quality verification](evidence/2026-08-12-home-browser-and-quality-verification.md)
