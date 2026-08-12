@@ -20,7 +20,7 @@ export function sanitizeUrl(value: string, options: SanitizeOptions = {}): strin
   }
 
   // 允许 data:image/ 开头的 data URL（仅限图片类型）
-  if (options.allowDataUrl && trimmed.startsWith('data:image/')) {
+  if (options.allowDataUrl && /^data:image\//i.test(trimmed)) {
     return trimmed
   }
 

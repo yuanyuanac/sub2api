@@ -1,5 +1,7 @@
 import { sanitizeUrl } from '@/utils/url'
 
+export const DEFAULT_SITE_NAME = 'AINODE'
+
 function inferFaviconMimeType(logoUrl: string): string {
   const normalized = logoUrl.toLowerCase()
   if (normalized.startsWith('data:image/svg+xml')) {

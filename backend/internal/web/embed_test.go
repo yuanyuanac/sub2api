@@ -43,6 +43,24 @@ func TestInjectSiteTitle(t *testing.T) {
 		assert.Equal(t, string(html), string(result))
 	})
 
+	t.Run("returns_unchanged_when_site_name_is_whitespace", func(t *testing.T) {
+		html := []byte(`<html><head><title>Sub2API - AI API Gateway</title></head><body></body></html>`)
+		settingsJSON := []byte(`{"site_name":"   "}`)
+
+		result := injectSiteTitle(html, settingsJSON)
+
+		assert.Equal(t, string(html), string(result))
+	})
+
+	t.Run("trims_site_name", func(t *testing.T) {
+		html := []byte(`<html><head><title>Sub2API - AI API Gateway</title></head><body></body></html>`)
+		settingsJSON := []byte(`{"site_name":"  My Site  "}`)
+
+		result := injectSiteTitle(html, settingsJSON)
+
+		assert.Contains(t, string(result), "<title>My Site - AI API Gateway</title>")
+	})
+
 	t.Run("returns_unchanged_when_site_name_missing", func(t *testing.T) {
 		html := []byte(`<html><head><title>Sub2API - AI API Gateway</title></head><body></body></html>`)
 		settingsJSON := []byte(`{"other_field":"value"}`)
@@ -116,12 +134,12 @@ func TestInjectSiteTitle(t *testing.T) {
 
 func TestInjectSiteFavicon(t *testing.T) {
 	t.Run("replaces_all_favicons_and_preserves_other_head_links", func(t *testing.T) {
-		html := []byte(`<html><head><link rel="icon" href="/logo.svg" /><link rel="shortcut icon" href="/legacy.ico" /><link rel="apple-touch-icon" href="/apple.png" /><link rel="manifest" href="/site.webmanifest" /></head></html>`)
-		settingsJSON := []byte(`{"site_logo":"https://example.com/custom-logo.png"}`)
+		html := []byte(`<html><head><link rel="icon" href="/logo.svg" /><link rel="Shortcut ICON" href="/legacy.ico" /><link rel="apple-touch-icon" href="/apple.png" /><link rel="manifest" href="/site.webmanifest" /></head></html>`)
+		settingsJSON := []byte(`{"site_logo":"HTTPS://example.com/custom-logo.png"}`)
 
 		result := injectSiteFavicon(html, settingsJSON)
 
-		assert.Contains(t, string(result), `<link rel="icon" type="image/png" href="https://example.com/custom-logo.png" />`)
+		assert.Contains(t, string(result), `<link rel="icon" type="image/png" href="HTTPS://example.com/custom-logo.png" />`)
 		assert.Equal(t, 1, strings.Count(string(result), `rel="icon"`))
 		assert.NotContains(t, string(result), `/logo.svg`)
 		assert.NotContains(t, string(result), `/legacy.ico`)
@@ -672,11 +690,11 @@ func TestFrontendServer_Middleware(t *testing.T) {
 
 		// Request for existing static file
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/logo.png", nil)
+		req := httptest.NewRequest(http.MethodGet, "/logo.svg", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Header().Get("Content-Type"), "image/png")
+		assert.Contains(t, w.Header().Get("Content-Type"), "image/svg+xml")
 		assert.Empty(t, w.Header().Get("Cache-Control"))
 
 		entries, err := fs.ReadDir(server.distFS, "assets")
@@ -757,11 +775,11 @@ func TestServeEmbeddedFrontend(t *testing.T) {
 		router.Use(middleware)
 
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/logo.png", nil)
+		req := httptest.NewRequest(http.MethodGet, "/logo.svg", nil)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Contains(t, w.Header().Get("Content-Type"), "image/png")
+		assert.Contains(t, w.Header().Get("Content-Type"), "image/svg+xml")
 	})
 
 	t.Run("serves_index_html_for_root", func(t *testing.T) {

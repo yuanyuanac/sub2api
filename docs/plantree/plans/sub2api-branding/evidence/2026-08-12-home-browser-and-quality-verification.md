@@ -32,11 +32,10 @@ Implementation commit: `79abcc45bdf0afa5387ea4dd246408ebffcda9ae`
 
 ## Environment boundary
 
-- Go and Docker are not installed in the local verification environment.
-- Backend compilation/tests and container-build validation must therefore run in GitHub CI before the change can be considered merge-ready.
-- No image was built or published, and no staging or production environment was changed.
+- Go was not available on `PATH` during this initial checkpoint. The 2026-08-13 follow-up review later passed embed-mode and full backend tests with the local cached Go 1.26.5 toolchain.
+- Docker validation remained unnecessary and outside the authorized scope. No image was built or published, and no staging or production environment was changed.
 
 ## Risk and rollback
 
-- Residual risk is limited to checks that require the unavailable Go/Docker toolchains and to deployment-specific configuration outside this worktree.
+- Residual risk at this checkpoint was limited to checks unavailable at that time and deployment-specific configuration outside this worktree; the later local Go verification removed the backend-toolchain portion of that risk.
 - Source rollback is the ordinary revert of `79abcc45bdf0afa5387ea4dd246408ebffcda9ae`; the preceding branding infrastructure commit can remain independent if only the homepage treatment is withdrawn.

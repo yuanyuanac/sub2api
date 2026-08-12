@@ -5,6 +5,7 @@
     <iframe
       v-if="isHomeContentUrl"
       :src="homeContent.trim()"
+      :title="`${siteName} home content`"
       class="h-screen w-full border-0"
       sandbox="allow-forms allow-popups allow-scripts"
       referrerpolicy="no-referrer"
@@ -32,20 +33,24 @@
           <span class="min-w-0 truncate text-base font-semibold">{{ siteName }}</span>
         </div>
         <div class="flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
-          <LocaleSwitcher />
+          <div class="home-locale-control">
+            <LocaleSwitcher />
+          </div>
           <a
             v-if="docUrl"
             :href="docUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             :title="t('home.viewDocs')"
           >
             <Icon name="book" size="md" />
           </a>
           <router-link
             :to="isAuthenticated ? dashboardPath : '/login'"
-            class="inline-flex min-h-10 shrink-0 items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             {{ isAuthenticated ? t('home.dashboard') : t('home.login') }}
           </router-link>
@@ -65,7 +70,8 @@
         <router-link
           data-testid="home-primary-cta"
           :to="isAuthenticated ? dashboardPath : '/login'"
-          class="mt-8 inline-flex min-h-10 items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+          data-home-control
+          class="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
         >
           {{ isAuthenticated ? t('home.goToDashboard') : t('home.login') }}
         </router-link>
@@ -97,7 +103,9 @@
         <!-- Nav Actions -->
         <div class="flex items-center gap-3">
           <!-- Language Switcher -->
-          <LocaleSwitcher />
+          <div class="home-locale-control">
+            <LocaleSwitcher />
+          </div>
 
           <!-- Doc Link -->
           <a
@@ -105,7 +113,8 @@
             :href="docUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="flex h-11 w-11 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
             :title="t('home.viewDocs')"
           >
             <Icon name="book" size="md" />
@@ -115,10 +124,11 @@
           <router-link
             v-if="isAuthenticated"
             :to="dashboardPath"
-            class="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-gray-900 py-1 pl-1 pr-2.5 transition-colors hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-gray-900 py-1 pl-1 pr-2.5 transition-colors hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             <span
-              class="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-[10px] font-semibold text-white"
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-[10px] font-semibold text-white"
             >
               {{ userInitial }}
             </span>
@@ -140,7 +150,8 @@
           <router-link
             v-else
             to="/login"
-            class="inline-flex min-h-10 items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="inline-flex min-h-11 items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             {{ t('home.login') }}
           </router-link>
@@ -169,7 +180,8 @@
               <router-link
                 data-testid="home-primary-cta"
                 :to="isAuthenticated ? dashboardPath : '/login'"
-                class="btn btn-primary px-8 py-3 text-base shadow-lg shadow-primary-500/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                data-home-control
+                class="btn btn-primary min-h-11 px-8 py-3 text-base shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
               >
                 {{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}
                 <Icon name="arrowRight" size="md" class="ml-2" :stroke-width="2" />
@@ -215,10 +227,10 @@
           </div>
         </div>
 
-        <!-- Feature Tags - Centered -->
-        <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
+        <!-- Operational proof -->
+        <div class="mb-12 grid border-y border-gray-200 sm:grid-cols-3">
           <div
-            class="home-white-surface inline-flex items-center gap-2.5 rounded-full border border-gray-200 bg-white px-5 py-2.5 shadow-sm"
+            class="home-white-surface flex items-center justify-center gap-2.5 bg-white px-4 py-4 sm:justify-start"
           >
             <Icon name="swap" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700">{{
@@ -226,7 +238,7 @@
             }}</span>
           </div>
           <div
-            class="home-white-surface inline-flex items-center gap-2.5 rounded-full border border-gray-200 bg-white px-5 py-2.5 shadow-sm"
+            class="home-white-surface flex items-center justify-center gap-2.5 border-t border-gray-200 bg-white px-4 py-4 sm:justify-start sm:border-l sm:border-t-0"
           >
             <Icon name="shield" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700">{{
@@ -234,7 +246,7 @@
             }}</span>
           </div>
           <div
-            class="home-white-surface inline-flex items-center gap-2.5 rounded-full border border-gray-200 bg-white px-5 py-2.5 shadow-sm"
+            class="home-white-surface flex items-center justify-center gap-2.5 border-t border-gray-200 bg-white px-4 py-4 sm:justify-start sm:border-l sm:border-t-0"
           >
             <Icon name="chart" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700">{{
@@ -243,20 +255,20 @@
           </div>
         </div>
 
-        <!-- Features Grid -->
-        <div class="mb-12 grid gap-6 md:grid-cols-3">
+        <!-- Capabilities -->
+        <div class="mb-12 grid border-y border-gray-200 md:grid-cols-3">
           <!-- Feature 1: Unified Gateway -->
           <div
-            class="home-white-surface group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10"
+            class="home-white-surface group bg-white p-6"
           >
             <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-110"
+              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 shadow-lg transition-transform group-hover:scale-110"
             >
               <Icon name="server" size="lg" class="text-white" />
             </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900">
+            <h2 class="mb-2 text-lg font-semibold text-gray-900">
               {{ t('home.features.unifiedGateway') }}
-            </h3>
+            </h2>
             <p class="text-sm leading-relaxed text-gray-700">
               {{ t('home.features.unifiedGatewayDesc') }}
             </p>
@@ -264,10 +276,10 @@
 
           <!-- Feature 2: Account Pool -->
           <div
-            class="home-white-surface group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10"
+            class="home-white-surface group border-t border-gray-200 bg-white p-6 md:border-l md:border-t-0"
           >
             <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30 transition-transform group-hover:scale-110"
+              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600 shadow-lg transition-transform group-hover:scale-110"
             >
               <svg
                 class="h-6 w-6 text-white"
@@ -283,9 +295,9 @@
                 />
               </svg>
             </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900">
+            <h2 class="mb-2 text-lg font-semibold text-gray-900">
               {{ t('home.features.multiAccount') }}
-            </h3>
+            </h2>
             <p class="text-sm leading-relaxed text-gray-700">
               {{ t('home.features.multiAccountDesc') }}
             </p>
@@ -293,10 +305,10 @@
 
           <!-- Feature 3: Billing & Quota -->
           <div
-            class="home-white-surface group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10"
+            class="home-white-surface group border-t border-gray-200 bg-white p-6 md:border-l md:border-t-0"
           >
             <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30 transition-transform group-hover:scale-110"
+              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-600 shadow-lg transition-transform group-hover:scale-110"
             >
               <svg
                 class="h-6 w-6 text-white"
@@ -312,9 +324,9 @@
                 />
               </svg>
             </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900">
+            <h2 class="mb-2 text-lg font-semibold text-gray-900">
               {{ t('home.features.balanceQuota') }}
-            </h3>
+            </h2>
             <p class="text-sm leading-relaxed text-gray-700">
               {{ t('home.features.balanceQuotaDesc') }}
             </p>
@@ -331,79 +343,79 @@
           </p>
         </div>
 
-        <div class="mb-16 flex flex-wrap items-center justify-center gap-4">
+        <div class="mb-16 flex flex-wrap items-center justify-center gap-x-2 gap-y-3 border-y border-gray-200 py-5">
           <!-- Claude - Supported -->
           <div
-            class="home-white-surface flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-3 ring-1 ring-primary-500/20"
+            class="home-white-surface flex items-center gap-2 bg-white px-3 py-2"
           >
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-500"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-orange-300 bg-white"
             >
-              <span class="text-xs font-bold text-white">C</span>
+              <span class="text-xs font-bold text-orange-700">C</span>
             </div>
             <span class="text-sm font-medium text-gray-700">{{ t('home.providers.claude') }}</span>
             <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-800"
+              class="text-[10px] font-semibold text-primary-800"
               >{{ t('home.providers.supported') }}</span
             >
           </div>
           <!-- GPT - Supported -->
           <div
-            class="home-white-surface flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-3 ring-1 ring-primary-500/20"
+            class="home-white-surface flex items-center gap-2 bg-white px-3 py-2 sm:border-l sm:border-gray-200"
           >
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-green-300 bg-white"
             >
-              <span class="text-xs font-bold text-white">G</span>
+              <span class="text-xs font-bold text-green-700">G</span>
             </div>
             <span class="text-sm font-medium text-gray-700">GPT</span>
             <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-800"
+              class="text-[10px] font-semibold text-primary-800"
               >{{ t('home.providers.supported') }}</span
             >
           </div>
           <!-- Gemini - Supported -->
           <div
-            class="home-white-surface flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-3 ring-1 ring-primary-500/20"
+            class="home-white-surface flex items-center gap-2 bg-white px-3 py-2 sm:border-l sm:border-gray-200"
           >
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-300 bg-white"
             >
-              <span class="text-xs font-bold text-white">G</span>
+              <span class="text-xs font-bold text-blue-700">G</span>
             </div>
             <span class="text-sm font-medium text-gray-700">{{ t('home.providers.gemini') }}</span>
             <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-800"
+              class="text-[10px] font-semibold text-primary-800"
               >{{ t('home.providers.supported') }}</span
             >
           </div>
           <!-- Antigravity - Supported -->
           <div
-            class="home-white-surface flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-5 py-3 ring-1 ring-primary-500/20"
+            class="home-white-surface flex items-center gap-2 bg-white px-3 py-2 sm:border-l sm:border-gray-200"
           >
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-600"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-rose-300 bg-white"
             >
-              <span class="text-xs font-bold text-white">A</span>
+              <span class="text-xs font-bold text-rose-700">A</span>
             </div>
             <span class="text-sm font-medium text-gray-700">{{ t('home.providers.antigravity') }}</span>
             <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-800"
+              class="text-[10px] font-semibold text-primary-800"
               >{{ t('home.providers.supported') }}</span
             >
           </div>
           <!-- More - Coming Soon -->
           <div
-            class="home-white-surface flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3"
+            class="home-white-surface flex items-center gap-2 bg-white px-3 py-2 sm:border-l sm:border-gray-200"
           >
             <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gray-500 to-gray-600"
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-300 bg-white"
             >
-              <span class="text-xs font-bold text-white">+</span>
+              <span class="text-xs font-bold text-gray-700">+</span>
             </div>
             <span class="text-sm font-medium text-gray-700">{{ t('home.providers.more') }}</span>
             <span
-              class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-700"
+              class="text-[10px] font-semibold text-gray-700"
               >{{ t('home.providers.soon') }}</span
             >
           </div>
@@ -425,7 +437,8 @@
             :href="docUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="inline-flex min-h-11 min-w-11 items-center justify-center px-1 text-sm text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             {{ t('home.docs') }}
           </a>
@@ -433,7 +446,8 @@
             :href="githubUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+            data-home-control
+            class="inline-flex min-h-11 min-w-11 items-center justify-center px-1 text-sm text-gray-600 transition-colors hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
           >
             GitHub
           </a>
@@ -450,6 +464,7 @@ import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { sanitizeUrl } from '@/utils/url'
+import { DEFAULT_SITE_NAME } from '@/utils/branding'
 
 const { t } = useI18n()
 
@@ -457,7 +472,10 @@ const authStore = useAuthStore()
 const appStore = useAppStore()
 
 // Site settings - directly from appStore (already initialized from injected config)
-const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'AINODE')
+const siteName = computed(() => {
+  const configuredSiteName = appStore.cachedPublicSettings?.site_name?.trim()
+  return configuredSiteName || appStore.siteName?.trim() || DEFAULT_SITE_NAME
+})
 const siteLogo = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '', { allowRelative: true, allowDataUrl: true }))
 const siteSubtitle = computed(() => appStore.cachedPublicSettings?.site_subtitle || 'AI API Gateway Platform')
 const docUrl = computed(() => sanitizeUrl(appStore.cachedPublicSettings?.doc_url || appStore.docUrl || ''))
@@ -468,7 +486,7 @@ const compactHomeEnabled = computed(() => appStore.cachedPublicSettings?.compact
 // Check if homeContent is a URL (for iframe display)
 const isHomeContentUrl = computed(() => {
   const content = homeContent.value.trim()
-  return content.startsWith('http://') || content.startsWith('https://')
+  return /^https?:\/\//i.test(content)
 })
 
 // GitHub URL
@@ -502,6 +520,12 @@ onMounted(() => {
 .home-white-root,
 .home-white-surface {
   background-color: #fff;
+}
+
+.home-locale-control :deep(button) {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
 }
 
 /* Terminal Container */
@@ -627,9 +651,6 @@ onMounted(() => {
 }
 .code-success {
   color: #166534;
-  background-color: #dcfce7;
-  padding: 2px 8px;
-  border-radius: 4px;
   font-weight: 600;
 }
 .code-response {

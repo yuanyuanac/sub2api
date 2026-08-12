@@ -32,10 +32,26 @@ describe('updateFavicon', () => {
     expect(link?.type).toBe('image/svg+xml')
   })
 
+  it('accepts a mixed-case image data URL', () => {
+    updateFavicon('DATA:IMAGE/PNG;base64,abc')
+
+    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    expect(link?.getAttribute('href')).toBe('DATA:IMAGE/PNG;base64,abc')
+    expect(link?.type).toBe('image/png')
+  })
+
   it('does not modify any nodes for an unsafe logo URL', () => {
     const originalHead = document.head.innerHTML
 
     updateFavicon('javascript:alert(1)')
+
+    expect(document.head.innerHTML).toBe(originalHead)
+  })
+
+  it('does not modify any nodes for a non-image data URL', () => {
+    const originalHead = document.head.innerHTML
+
+    updateFavicon('data:text/html,<script>alert(1)</script>')
 
     expect(document.head.innerHTML).toBe(originalHead)
   })

@@ -1,7 +1,7 @@
 # AINODE Branding and Opaque-White Homepage
 
 Role: active-plan entrypoint
-Status: B1-B6G complete; delivered as Draft PR
+Status: B1-B6G complete; follow-up review hardening verified locally and pending Draft PR synchronization
 
 ## Outcome
 
@@ -43,4 +43,4 @@ Do not change gateway, authentication, billing, payment, database, Redis, or adm
 
 See [Implementation Status](implementation-status.md).
 
-Final GitHub verification is recorded in [Draft PR CI acceptance](evidence/2026-08-12-draft-pr-ci-acceptance.md).
+Initial GitHub verification is recorded in [Draft PR CI acceptance](evidence/2026-08-12-draft-pr-ci-acceptance.md). The follow-up hardening review and expanded local verification are recorded in [Branding review and verification](evidence/2026-08-13-branding-review-and-verification.md).

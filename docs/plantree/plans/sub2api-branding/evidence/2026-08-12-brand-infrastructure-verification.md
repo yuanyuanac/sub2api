@@ -32,11 +32,10 @@ git diff --check
 
 The production build emitted only the repository's existing chunk/dynamic-import warnings. No dependency or lockfile change was introduced.
 
-## Environment Blockers
+## Environment Notes
 
-- `go`: command not found. The repository requests Go `1.26.5`, so `go test ./internal/web` and the backend embed test cannot be executed on this workstation.
-- `docker`: command not found. No image was built or published, consistent with the current authorization boundary.
-- These are explicit environment blockers; they are not recorded as passing gates. GitHub CI is expected to supply independent validation after the Draft PR is opened.
+- Go was not available on `PATH` during this initial checkpoint. That historical limitation was superseded on 2026-08-13: the follow-up review located the local cached Go 1.26.5 toolchain and passed `go test -tags embed ./internal/web` plus `go test ./...`.
+- `docker` was not required or authorized. No image was built or published.
 
 ## Delivery Boundary
 

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
 
 import HomeView from '../HomeView.vue'
+import homeSource from '../HomeView.vue?raw'
 
 const { appStore, authStore } = vi.hoisted(() => ({
   appStore: {
@@ -102,8 +103,19 @@ describe('HomeView compact mode', () => {
     const iframe = wrapper.get('iframe')
 
     expect(iframe.attributes('src')).toBe('https://example.com/home')
+    expect(iframe.attributes('title')).toBe('Test site home content')
     expect(iframe.attributes('sandbox')).toBe('allow-forms allow-popups allow-scripts')
     expect(iframe.attributes('referrerpolicy')).toBe('no-referrer')
+    expect(wrapper.find('[data-testid="compact-home"]').exists()).toBe(false)
+  })
+
+  it('recognizes a mixed-case HTTP scheme as custom URL content', () => {
+    const wrapper = mountHome({
+      compact_home_enabled: true,
+      home_content: ' HTTPS://example.com/home ',
+    })
+
+    expect(wrapper.get('iframe').attributes('src')).toBe('HTTPS://example.com/home')
     expect(wrapper.find('[data-testid="compact-home"]').exists()).toBe(false)
   })
 
@@ -169,8 +181,46 @@ describe('HomeView compact mode', () => {
     expect(classes.some((name) => name.startsWith('dark:'))).toBe(false)
     expect(classes.some((name) => name.startsWith('bg-white/'))).toBe(false)
     expect(classes.some((name) => name.includes('backdrop-blur'))).toBe(false)
-    expect(classes.some((name) => name.includes('linear-gradient'))).toBe(false)
+    expect(classes.some((name) => name.includes('gradient'))).toBe(false)
+    expect(
+      classes.some((name) =>
+        /(?:^|:)shadow-(?:primary|blue|purple|orange|green|rose|pink)-\d+(?:\/\d+)?$/.test(
+          name,
+        ),
+      ),
+    ).toBe(false)
+    expect(homeSource).not.toMatch(/(?:linear|radial|conic)-gradient\s*\(/i)
+    expect(
+      classes.some((name) =>
+        /^bg-(?:primary|blue|purple|orange|green|rose|pink|gray)-100$/.test(name),
+      ),
+    ).toBe(false)
     expect(wrapper.find('button').exists()).toBe(false)
+  })
+
+  it.each([
+    ['default', false],
+    ['compact', true],
+  ])('keeps every owned %s-page control at least 44 CSS pixels tall', (mode, compactEnabled) => {
+    const wrapper = mountHome({
+      compact_home_enabled: compactEnabled,
+      doc_url: 'https://docs.example.com/ainode',
+    })
+
+    const controls = wrapper.findAll('[data-home-control]')
+    expect(controls.length).toBeGreaterThan(0)
+    for (const control of controls) {
+      expect(control.classes().some((name) => name === 'min-h-11' || name === 'h-11')).toBe(true)
+    }
+    expect(wrapper.get(`[data-testid="${mode}-home"] .home-locale-control`).exists()).toBe(true)
+  })
+
+  it('uses a coherent heading hierarchy on the default page', () => {
+    const wrapper = mountHome()
+
+    expect(wrapper.findAll('h1')).toHaveLength(1)
+    expect(wrapper.findAll('h2').length).toBeGreaterThanOrEqual(4)
+    expect(wrapper.find('h3').exists()).toBe(false)
   })
 
   it.each([
@@ -203,11 +253,21 @@ describe('HomeView compact mode', () => {
     ['default', false],
     ['compact', true],
   ])('uses AINODE when no configured or store site name exists on the %s page', (mode, compactEnabled) => {
-    appStore.siteName = ''
+    appStore.siteName = '   '
 
-    const wrapper = mountHome({ compact_home_enabled: compactEnabled, site_name: '' })
+    const wrapper = mountHome({ compact_home_enabled: compactEnabled, site_name: ' \n\t ' })
 
     expect(wrapper.get(`[data-testid="${mode}-home"]`).text()).toContain('AINODE')
     expect(wrapper.get('img').attributes('alt')).toBe('AINODE logo')
+  })
+
+  it.each([
+    ['default', false],
+    ['compact', true],
+  ])('trims the configured site name on the %s page', (mode, compactEnabled) => {
+    const wrapper = mountHome({ compact_home_enabled: compactEnabled, site_name: '  AINODE Edge  ' })
+
+    expect(wrapper.get(`[data-testid="${mode}-home"]`).text()).toContain('AINODE Edge')
+    expect(wrapper.get('img').attributes('alt')).toBe('AINODE Edge logo')
   })
 })
