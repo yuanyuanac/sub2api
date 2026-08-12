@@ -53,6 +53,12 @@ The production build emitted only the repository's existing Browserslist age, dy
 ## Delivery and rollback
 
 - Delivery target: existing Draft PR [#1](https://github.com/yuanyuanac/sub2api/pull/1) on `feature/sub2api-branding` by ordinary push only.
-- GitHub head SHA and follow-up CI run URLs are pending synchronization and will be recorded after terminal checks.
+- Hardening commit: `e2ef0ad5dd4cf6d557f41a9d9b689a61a76b01a7` (`fix(branding): harden homepage and embed fallbacks`).
+- At hardening acceptance, local HEAD, `origin/feature/sub2api-branding`, and the PR head all matched `e2ef0ad5dd4cf6d557f41a9d9b689a61a76b01a7`.
+- PR state at acceptance: open, Draft, and not merged.
+- PR-triggered [CI run 31623863968](https://github.com/yuanyuanac/sub2api/actions/runs/31623863968): success. `frontend`, `test`, `shell`, and `golangci-lint` all passed.
+- PR-triggered [Security Scan run 31623863669](https://github.com/yuanyuanac/sub2api/actions/runs/31623863669): success. `frontend-security` and `backend-security` both passed.
+- Push-triggered [Security Scan run 31623861109](https://github.com/yuanyuanac/sub2api/actions/runs/31623861109): success on attempt 1.
+- Push-triggered [CI run 31623861089](https://github.com/yuanyuanac/sub2api/actions/runs/31623861089): success on attempt 2. Attempt 1's `golangci-lint` job failed before source analysis because the runner received two `socket hang up` errors while downloading the v2.9.0 binary. A failed-job rerun completed the same lint job successfully without source or workflow changes; the original run's `frontend`, `test`, and `shell` jobs had already passed.
 - Merge, Ready-for-review transition, force-push, deployment, release, and publication remain prohibited.
 - Rollback is an ordinary revert of the follow-up hardening commit; no schema, migration, dependency, or external-state rollback is required.
