@@ -26,6 +26,25 @@ function isSafeImageUrl(value: string): boolean {
   }
 }
 
+function inferFaviconMimeType(value: string): string {
+  const normalized = value.toLowerCase()
+  if (normalized.startsWith('data:image/svg+xml')) return 'image/svg+xml'
+  if (normalized.startsWith('data:image/png')) return 'image/png'
+  if (normalized.startsWith('data:image/x-icon')) return 'image/x-icon'
+
+  const path = normalized.replace(/[?#].*$/, '')
+  if (path.endsWith('.svg')) return 'image/svg+xml'
+  if (path.endsWith('.png')) return 'image/png'
+  if (path.endsWith('.ico')) return 'image/x-icon'
+  return ''
+}
+
+function hasFaviconRel(linkTag: string): boolean {
+  const relMatch = linkTag.match(/\brel\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i)
+  const rel = relMatch?.[1] || relMatch?.[2] || relMatch?.[3] || ''
+  return rel.toLowerCase().split(/\s+/).includes('icon')
+}
+
 function injectBranding(html: string, config: { site_name?: string; site_logo?: string }): string {
   let brandedHtml = html
   const siteName = config.site_name?.trim()
@@ -38,10 +57,13 @@ function injectBranding(html: string, config: { site_name?: string; site_logo?: 
 
   const siteLogo = config.site_logo?.trim()
   if (siteLogo && isSafeImageUrl(siteLogo)) {
-    brandedHtml = brandedHtml.replace(
-      /<link\s+rel=["']icon["'][^>]*>/i,
-      `<link rel="icon" href="${escapeHtml(siteLogo)}" />`,
+    brandedHtml = brandedHtml.replace(/<link\b[^>]*>/gi, (linkTag) =>
+      hasFaviconRel(linkTag) ? '' : linkTag,
     )
+    const mimeType = inferFaviconMimeType(siteLogo)
+    const typeAttribute = mimeType ? ` type="${mimeType}"` : ''
+    const favicon = `<link rel="icon"${typeAttribute} href="${escapeHtml(siteLogo)}" />`
+    brandedHtml = brandedHtml.replace('</head>', `${favicon}\n</head>`)
   }
   return brandedHtml
 }

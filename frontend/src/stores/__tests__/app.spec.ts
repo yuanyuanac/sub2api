@@ -414,6 +414,20 @@ describe('useAppStore', () => {
       expect(store.publicSettingsLoaded).toBe(true)
     })
 
+    it('normalizes configured site names and falls back to AINODE for whitespace', () => {
+      const windowAny = window as any
+      windowAny.__APP_CONFIG__ = { site_name: '  AINODE Edge  ' }
+
+      const store = useAppStore()
+      expect(store.initFromInjectedConfig()).toBe(true)
+      expect(store.siteName).toBe('AINODE Edge')
+
+      windowAny.__APP_CONFIG__ = { site_name: ' \n\t ' }
+      store.clearPublicSettingsCache()
+      expect(store.initFromInjectedConfig()).toBe(true)
+      expect(store.siteName).toBe('AINODE')
+    })
+
     it('无注入配置时返回 false', () => {
       const store = useAppStore()
       const result = store.initFromInjectedConfig()
