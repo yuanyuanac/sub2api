@@ -1,7 +1,7 @@
 # AINODE Branding and Opaque-White Homepage
 
 Role: active-plan entrypoint
-Status: B1-B6G implementation active
+Status: B1-B6G complete; delivered as Draft PR
 
 ## Outcome
 
@@ -42,3 +42,5 @@ Do not change gateway, authentication, billing, payment, database, Redis, or adm
 ## Current Status
 
 See [Implementation Status](implementation-status.md).
+
+Final GitHub verification is recorded in [Draft PR CI acceptance](evidence/2026-08-12-draft-pr-ci-acceptance.md).
